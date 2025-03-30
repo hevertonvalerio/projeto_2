@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as twilio from 'twilio';
+import { WebhookRequestDto } from './dto/webhook-request.dto';
 
 @Injectable()
 export class WhatsappService implements OnModuleInit {
@@ -51,6 +52,34 @@ export class WhatsappService implements OnModuleInit {
       return {
         success: true,
         messageId: message.sid,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  async handleWebhook(webhookData: WebhookRequestDto) {
+    try {
+      // Validar se o webhook veio do Twilio
+      if (webhookData.AccountSid !== this.accountSid) {
+        throw new Error('Invalid AccountSid');
+      }
+
+      // Log do status da mensagem
+      console.log(`Message ${webhookData.MessageSid} status updated to: ${webhookData.MessageStatus}`);
+
+      // Aqui você pode adicionar lógica adicional como:
+      // - Salvar o status em um banco de dados
+      // - Notificar outros sistemas
+      // - Enviar confirmações para outros serviços
+
+      return {
+        success: true,
+        message: `Webhook processed for message ${webhookData.MessageSid}`,
+        status: webhookData.MessageStatus,
       };
     } catch (error) {
       return {

@@ -57,3 +57,4 @@ export class WhatsappController {
   async handleWebhook(@Body() webhookData: WebhookRequestDto) {
     return await this.whatsappService.handleWebhook(webhookData);
   }
+}
